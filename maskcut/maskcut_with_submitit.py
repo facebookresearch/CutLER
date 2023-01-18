@@ -322,11 +322,11 @@ if __name__ == "__main__":
         url = args.pretrain_path
     if args.vit_arch == 'base' and args.patch_size == 8:
         if args.pretrain_path is None:
-            url = "/dino/dino_vitbase8_pretrain/dino_vitbase8_pretrain.pth"
+            url = "https://dl.fbaipublicfiles.com/dino/dino_vitbase8_pretrain/dino_vitbase8_pretrain.pth"
         feat_dim = 768
     elif args.vit_arch == 'small' and args.patch_size == 8:
         if args.pretrain_path is None:
-            url = "/dino/dino_deitsmall8_300ep_pretrain/dino_deitsmall8_300ep_pretrain.pth"
+            url = "https://dl.fbaipublicfiles.com/dino/dino_deitsmall8_300ep_pretrain/dino_deitsmall8_300ep_pretrain.pth"
         feat_dim = 384
 
     backbone = dino.ViTFeat(url, feat_dim, args.vit_arch, args.vit_feat, args.patch_size)
