@@ -1,0 +1,40 @@
+_BASE_: "../Base-RCNN-FPN.yaml"
+MODEL:
+  PIXEL_MEAN: [123.675, 116.280, 103.530]
+  PIXEL_STD: [58.395, 57.120, 57.375]
+  WEIGHTS: "http://dl.fbaipublicfiles.com/cutler/checkpoints/cutler_cascade_final.pth"
+  MASK_ON: True
+  BACKBONE:
+    FREEZE_AT: 0
+  RESNETS:
+    DEPTH: 50
+    NORM: "SyncBN"
+    STRIDE_IN_1X1: False
+  FPN:
+    NORM: "SyncBN"
+  ROI_BOX_HEAD:
+    CLS_AGNOSTIC_BBOX_REG: True
+  ROI_HEADS:
+    NAME: CustomCascadeROIHeads
+  RPN:
+    POST_NMS_TOPK_TRAIN: 2000
+DATASETS:
+  TRAIN: ("coco_semi_40perc",)
+  TEST: ("coco_2017_val",)
+SOLVER:
+  IMS_PER_BATCH: 16
+  BASE_LR: 0.04
+  STEPS: (24000, 32000)
+  MAX_ITER: 36000
+  BASE_LR_MULTIPLIER: 4
+  BASE_LR_MULTIPLIER_NAMES: ['roi_heads.mask_head.predictor', 'roi_heads.box_predictor.0.cls_score', 'roi_heads.box_predictor.0.bbox_pred', 'roi_heads.box_predictor.1.cls_score', 'roi_heads.box_predictor.1.bbox_pred', 'roi_heads.box_predictor.2.cls_score', 'roi_heads.box_predictor.2.bbox_pred']
+INPUT:
+  MIN_SIZE_TRAIN: (640, 672, 704, 736, 768, 800)
+  MAX_SIZE_TRAIN: 1333
+  MASK_FORMAT: "bitmask"
+  FORMAT: "RGB"
+TEST:
+  PRECISE_BN:
+    ENABLED: True
+  EVAL_PERIOD: 5000
+OUTPUT_DIR: "output/40perc"
