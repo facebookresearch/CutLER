@@ -40,8 +40,8 @@ _PREDEFINED_SPLITS_COCO_SEMI["coco_semi"] = {
 
 _PREDEFINED_SPLITS_COCO_CA = {}
 _PREDEFINED_SPLITS_COCO_CA["coco_cls_agnostic"] = {
-    "cls_agnostic_coco": ("imagenet/cocoval2017", "imagenet/annotations/coco_cls_agnostic_instances_val2017.json"),
-    "cls_agnostic_coco20k": ("imagenet/train2014", "imagenet/annotations/coco20k_trainval_gt.json"),
+    "cls_agnostic_coco": ("coco/val2017", "coco/annotations/coco_cls_agnostic_instances_val2017.json"),
+    "cls_agnostic_coco20k": ("coco/train2014", "coco/annotations/coco20k_trainval_gt.json"),
 }
 
 _PREDEFINED_SPLITS_IMAGENET = {}
@@ -75,7 +75,7 @@ _PREDEFINED_SPLITS_KITTI["kitti"] = {
 
 _PREDEFINED_SPLITS_LVIS = {}
 _PREDEFINED_SPLITS_LVIS["lvis"] = {
-    "cls_agnostic_lvis": ("coco/", "imagenet/annotations/lvis1.0_cocofied_val_cls_agnostic.json"),
+    "cls_agnostic_lvis": ("coco/", "coco/annotations/lvis1.0_cocofied_val_cls_agnostic.json"),
 }
 
 _PREDEFINED_SPLITS_OBJECTS365 = {}
