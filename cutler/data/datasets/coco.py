@@ -399,7 +399,7 @@ def convert_to_coco_dict(dataset_name):
                     if idx % 3 != 2:
                         # COCO's segmentation coordinates are floating points in [0, H or W],
                         # but keypoint coordinates are integers in [0, H-1 or W-1]
-                        # For COCO format consistency we substract 0.5
+                        # For COCO format consistency we subtract 0.5
                         # https://github.com/facebookresearch/detectron2/pull/175#issuecomment-551202163
                         keypoints[idx] = v - 0.5
                 if "num_keypoints" in annotation:
