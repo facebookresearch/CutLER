@@ -56,5 +56,5 @@ TEST:
     ENABLED: True
     NUM_ITER: 200
   DETECTIONS_PER_IMAGE: 100
-OUTPUT_DIR: "/home/xudongw/home/CutLER-Github/CutLER/cutler/test/self-train-r1/" # round 1
+OUTPUT_DIR: "output/self-train-r1/" # round 1
 # OUTPUT_DIR: "output/self-train-r2/" # round 2

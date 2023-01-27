@@ -1,5 +1,4 @@
 # Copyright (c) Meta Platforms, Inc. and affiliates.
-# Modified by XuDong Wang from third_party/TokenCut
 
 #!/usr/bin/env python3
 import os
@@ -25,6 +24,7 @@ import json
 import dino # model
 from third_party.TokenCut.unsupervised_saliency_detection import utils, metric
 from third_party.TokenCut.unsupervised_saliency_detection.object_discovery import detect_box
+# Modified by XuDong Wang from third_party/TokenCut
 # bilateral_solver codes are modfied based on https://github.com/poolio/bilateral_solver/blob/master/notebooks/bilateral_solver.ipynb
 # from third_party.TokenCut.unsupervised_saliency_detection.bilateral_solver import BilateralSolver, BilateralGrid
 # crf codes are are modfied based on https://github.com/lucasb-eyer/pydensecrf/blob/master/pydensecrf/tests/test_dcrf.py
@@ -310,8 +310,8 @@ if __name__ == "__main__":
     # additional arguments
     parser.add_argument('--dataset-path', type=str, default="imagenet/train/", help='path to the dataset')
     parser.add_argument('--tau', type=float, default=0.2, help='threshold used for producing binary graph')
-    parser.add_argument('--num-folder', type=int, default=1, help='the number of folders each job processes')
-    parser.add_argument('--job-index', type=int, default=0, help='the index of the job (in the range of 0 to 1000/args.num_folder)')
+    parser.add_argument('--num-folder-per-job', type=int, default=1, help='the number of folders each job processes')
+    parser.add_argument('--job-index', type=int, default=0, help='the index of the job (for imagenet: in the range of 0 to 1000/args.num_folder_per_job-1)')
     parser.add_argument('--fixed_size', type=int, default=480, help='rescale the input images to a fixed size')
     parser.add_argument('--pretrain_path', type=str, default=None, help='path to pretrained model')
     parser.add_argument('--N', type=int, default=3, help='the maximum number of pseudo-masks per image')
@@ -341,8 +341,8 @@ if __name__ == "__main__":
     if args.out_dir is not None and not os.path.exists(args.out_dir) :
         os.mkdir(args.out_dir)
 
-    start_idx = max(args.job_index*args.num_folder, 0)
-    end_idx = min((args.job_index+1)*args.num_folder, len(img_folders))
+    start_idx = max(args.job_index*args.num_folder_per_job, 0)
+    end_idx = min((args.job_index+1)*args.num_folder_per_job, len(img_folders))
 
     image_id, segmentation_id = 1, 1
     image_names = []
@@ -396,7 +396,10 @@ if __name__ == "__main__":
             image_id += 1
 
     # dump annotations
-    json_name = '{}/imagenet_train_fixsize{}_tau{}_N{}_{}_{}.json'.format(args.out_dir, args.fixed_size, args.tau, args.N, start_idx, end_idx)
+    if len(img_folders) == args.num_folder_per_job and args.job_index == 0:
+        json_name = '{}/imagenet_train_fixsize{}_tau{}_N{}.json'.format(args.out_dir, args.fixed_size, args.tau, args.N)
+    else:
+        json_name = '{}/imagenet_train_fixsize{}_tau{}_N{}_{}_{}.json'.format(args.out_dir, args.fixed_size, args.tau, args.N, start_idx, end_idx)
     with open(json_name, 'w') as output_json_file:
         json.dump(output, output_json_file)
     print(f'dumping {json_name}')

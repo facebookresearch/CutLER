@@ -1,7 +1,8 @@
 # Copyright (c) Meta Platforms, Inc. and affiliates.
+
 # link to the dataset folder, model weights and the config file.
 export DETECTRON2_DATASETS=/path/to/DETECTRON2_DATASETS/
-model_weights="/path/to/checkpoint"
+model_weights="http://dl.fbaipublicfiles.com/cutler/checkpoints/cutler_cascade_final.pth"
 config_file="model_zoo/configs/CutLER-ImageNet/cascade_mask_rcnn_R_50_FPN.yaml"
 num_gpus=2
 

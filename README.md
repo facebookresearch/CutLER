@@ -56,27 +56,25 @@ Following, we give some visualizations of the pseudo-masks on the demo images.
 </p>
 
 ### Generating Annotations for ImageNet-1K with MaskCut
-To generate pseudo-masks for ImageNet-1K with MaskCut, first setup the ImageNet-1K dataset following [datasets/README.md](datasets/README.md), then run the following command:
+To generate pseudo-masks for ImageNet-1K using MaskCut, first set up the ImageNet-1K dataset according to the instructions in [datasets/README.md](datasets/README.md), then execute the following command:
 ```
 cd maskcut
 python maskcut.py \
 --vit-arch base --patch-size 8 \
 --tau 0.15 --fixed_size 480 --N 3 \
---num-folder 1000 --job-index 0 \
+--num-folder-per-job 1000 --job-index 0 \
 --dataset-path /path/to/dataset/traindir \
 --out-dir /path/to/save/annotations \
 ```
-
-Since it takes a long time to complete the pseudo-mask generation process for all 1.3M images stored in 1,000 folders, it is recommended to use multiple runs, each processing the pseudo-mask generation for fewer image folders at a time by setting "--num-folder" and "--job-index".
-After that, you can merge all these json files using the following command:
+As the process of generating pseudo-masks for all 1.3 million images in 1,000 folders takes a significant amount of time, it is recommended to use multiple runs. Each run should process the pseudo-mask generation for a smaller number of image folders by setting "--num-folder-per-job" and "--job-index". Once all runs are completed, you can merge all the resulting json files by using the following command:
 ```
 python merge_jsons.py \
 --base-dir /path/to/save/annotations \
---num-folder 2 --fixed-size 480 \
+--num-folder-per-job 2 --fixed-size 480 \
 --tau 0.15 --N 3 \
 --save-path imagenet_train_fixsize480_tau0.15_N3.json
 ```
-The "--num-folder", "--fixed-size", "--tau" and "--N" of merge_jsons.py should match the ones used to run maskcut.py.
+The "--num-folder-per-job", "--fixed-size", "--tau" and "--N" of merge_jsons.py should match the ones used to run maskcut.py.
 
 We also provide a submitit script to launch the pseudo-mask generation process with multiple nodes. 
 ```
@@ -115,8 +113,7 @@ Following, we give some visualizations of the model predictions on the demo imag
 
 ### Unsupervised Model Learning
 Before training the detector, it is necessary to use MaskCut to generate pseudo-masks for all ImageNet data.
-You can use the pre-generated json file directly, please download it from [here](http://dl.fbaipublicfiles.com/cutler/maskcut/imagenet_train_fixsize480_tau0.15_N3.json) and put it under "DETECTRON2_DATASETS/imagenet/annotations/".
-Or if you want to generate your own pseudo-masks, you can follow the instructions on [MaskCut](#maskcut).
+You can either use the pre-generated json file directly by downloading it from [here](http://dl.fbaipublicfiles.com/cutler/maskcut/imagenet_train_fixsize480_tau0.15_N3.json) and placing it under "DETECTRON2_DATASETS/imagenet/annotations/", or generate your own pseudo-masks by following the instructions in [MaskCut](#1-maskcut).
 
 We provide a script `train_net.py`, that is made to train all the configs provided in CutLER.
 To train a model with "train_net.py", first setup the ImageNet-1K dataset following [datasets/README.md](datasets/README.md), then run:
@@ -127,12 +124,13 @@ python train_net.py --num-gpus 8 \
   --config-file model_zoo/configs/CutLER-ImageNet/cascade_mask_rcnn_R_50_FPN.yaml
 ```
 
-If you want to train a model with multiple nodes, you may need to change [some model parameters](https://arxiv.org/abs/1706.02677) and some SBATCH command options in "tools/train-1node.sh" and "tools/single-node_run.sh", then run:
+If you want to train a model using multiple nodes, you may need to adjust [some model parameters](https://arxiv.org/abs/1706.02677) and some SBATCH command options in "tools/train-1node.sh" and "tools/single-node_run.sh", then run:
 ```
 cd cutler
 sbatch tools/train-1node.sh \
   --config-file model_zoo/configs/CutLER-ImageNet/cascade_mask_rcnn_R_50_FPN.yaml \
-  MODEL.WEIGHTS /path/to/dino/d2format/model
+  MODEL.WEIGHTS /path/to/dino/d2format/model \
+  OUTPUT_DIR output/
 ```
 You can also convert a pre-trained DINO model to detectron2's format by yourself following [this link](https://github.com/facebookresearch/moco/tree/main/detection).
 
@@ -145,30 +143,31 @@ python train_net.py --num-gpus 8 \
   --config-file model_zoo/configs/CutLER-ImageNet/cascade_mask_rcnn_R_50_FPN.yaml \
   --test-dataset imagenet_train \
   --eval-only TEST.DETECTIONS_PER_IMAGE 30 \
-  MODEL.WEIGHTS output/cutler_cascade_r1.pth \
-  OUTPUT_DIR output/
+  MODEL.WEIGHTS output/model_final.pth \ # load previous stage/round checkpoints
+  OUTPUT_DIR output/ # path to save model predictions
 ```
 Secondly, we can run the following command to generate the json file for the first round of self-training:
 ```
 python tools/get_self_training_ann.py \
-  --new-pred output/inference/coco_instances_results.json \
-  --prev-ann DETECTRON2_DATASETS/imagenet/annotations/imagenet_train_fixsize480_tau0.15_N3.json \
-  --save-path DETECTRON2_DATASETS/imagenet/annotations/cutler_imagenet1k_train_r1.json \
+  --new-pred output/inference/coco_instances_results.json \ # load model predictions
+  --prev-ann DETECTRON2_DATASETS/imagenet/annotations/imagenet_train_fixsize480_tau0.15_N3.json \ # path to the old annotation file.
+  --save-path DETECTRON2_DATASETS/imagenet/annotations/cutler_imagenet1k_train_r1.json \ # path to save a new annotation file.
   --threshold 0.7
 ```
-Lastly, place "cutler_imagenet1k_train_r1.json" under "DETECTRON2_DATASETS/imagenet/annotations/", then launch the self-training process:
+Finally, place "cutler_imagenet1k_train_r1.json" under "DETECTRON2_DATASETS/imagenet/annotations/", then launch the self-training process:
 ```
 python train_net.py --num-gpus 8 \
   --config-file model_zoo/configs/CutLER-ImageNet/cascade_mask_rcnn_R_50_FPN_self_train.yaml \
   --train-dataset imagenet_train_r1 \
-  MODEL.WEIGHTS output/cutler_cascade_r1.pth \
-  OUTPUT_DIR output/self-train-r1/
+  MODEL.WEIGHTS output/model_final.pth \ # load previous stage/round checkpoints
+  OUTPUT_DIR output/self-train-r1/ # path to save checkpoints
 ```
 
-You can repeat above steps to complete multiple rounds of self-training and change some arguments (e.g., "--threshold" for round 1 and 2 are 0.7 and 0.65, respectively; "--train-dataset" for round 1 and 2 are "imagenet_train_r1" and "imagenet_train_r2", respectively; MODEL.WEIGHTS for round 1 and 2 are "output/cutler_cascade_r1.pth" and "output/cutler_cascade_r2.pth"). Please place all annotation files under DETECTRON2_DATASETS/imagenet/annotations.
-Note: Please confirm that "--train-dataset", json file names and json file locations match the ones specified in "cutler/data/datasets/builtin.py". 
+You can repeat the steps above to perform multiple rounds of self-training and adjust some arguments as needed (e.g., "--threshold" for round 1 and 2 can be set to 0.7 and 0.65, respectively; "--train-dataset" for round 1 and 2 can be set to "imagenet_train_r1" and "imagenet_train_r2", respectively; MODEL.WEIGHTS for round 1 and 2 should point to the previous stage/round checkpoints). Ensure that all annotation files are placed under DETECTRON2_DATASETS/imagenet/annotations/.
+Please ensure that "--train-dataset", json file names and locations match the ones specified in "cutler/data/datasets/builtin.py".
+Please refer to this [instruction](https://detectron2.readthedocs.io/en/latest/tutorials/datasets.html) for guidance on using custom datasets.
 
-You can also directly download the models and annotations used by each round of self-training:
+You can also directly download the MODEL.WEIGHTS and annotations used for each round of self-training:
 <table><tbody>
 <!-- START TABLE -->
 <!-- TABLE BODY -->
@@ -185,7 +184,7 @@ You can also directly download the models and annotations used by each round of 
 </tbody></table>
 
 ### Unsupervised Zero-shot Evaluation
-To evaluate a model's performance on 11 different datasets, please follow [datasets/README.md](datasets/README.md) to prepare datasets, update "model_weights" and "config_file" in `tools/eval.sh`, then run:
+To evaluate a model's performance on 11 different datasets, please refer to [datasets/README.md](datasets/README.md) for instructions on preparing the datasets. Next, select a model from the model zoo, specify the "model_weights", "config_file" and the path to "DETECTRON2_DATASETS" in `tools/eval.sh`, then run the script.
 ```
 bash tools/eval.sh
 ```
@@ -349,7 +348,7 @@ We fine-tune a Cascade R-CNN model initialized with CutLER or MoCo-v2 on varying
 Both MoCo-v2 and our CutLER are trained for the 1x schedule using Detectron2, except for extremely low-shot settings with 1% or 2% labels. When training with 1% or 2% labels, we train both MoCo-v2 and our model for 3,600 iterations with a batch size of 16.
 
 ## License
-The majority of CutLER, Detectron2 and DINO are licensed under the [Apache 2.0 license](LICENSE), however portions of the project are available under separate license terms: TokenCUT, Bilateral Solver and CRF are licensed under the MIT license; If you later add other third party code, please keep this license info updated, and please let us know if that component is licensed under something other than CC-BY-NC, MIT, or CC0.
+The majority of CutLER, Detectron2 and DINO are licensed under the [Apache 2.0 license](LICENSE), however portions of the project are available under separate license terms: TokenCut, Bilateral Solver and CRF are licensed under the MIT license; If you later add other third party code, please keep this license info updated, and please let us know if that component is licensed under something other than CC-BY-NC, MIT, or CC0.
 
 ## Ethical Considerations
 CutLER's wide range of detection capabilities may introduce similar challenges to many other visual recognition recognition methods.
@@ -361,10 +360,10 @@ If you have any general questions, feel free to email us at [Xudong Wang](mailto
 ## Citation
 If you find our work inspiring or use our codebase in your research, please consider giving a star ⭐ and a citation.
 ```
-@article{wang2022cut,
+@article{wang2023cut,
   title={Cut and Learn for Unsupervised Object Detection and Instance Segmentation},
   author={Wang, Xudong and Girdhar, Rohit and Yu, Stella X and Misra, Ishan},
-  journal={arXiv preprint arXiv:xxxx.xxxxx},
-  year={2022}
+  journal={arXiv preprint arXiv:2301.11320},
+  year={2023}
 }
 ```

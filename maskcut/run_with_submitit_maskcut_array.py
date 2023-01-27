@@ -142,7 +142,7 @@ def main():
     print(args.output_dir)
 
     # list_folders = list(range(0, 500))
-    end_idx = (1000 - args.job_index) // args.num_folder + 1
+    end_idx = (1000 - args.job_index) // args.num_folder_per_job + 1
     list_folders = list(range(args.job_index, end_idx))
     jobs = []
     args_list = []
