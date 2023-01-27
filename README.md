@@ -6,10 +6,10 @@ It outperforms previous SOTA by **2.7 times** for AP50 and **2.6 times** for AR 
 <p align="center"> <img src='docs/teaser_img.jpg' align="center" > </p>
 
 > [**Cut and Learn for Unsupervised Object Detection and Instance Segmentation**](http://people.eecs.berkeley.edu/~xdwang/projects/CutLER/)            
-> Xudong Wang, Rohit Girdhar, Stella X. Yu, Ishan Misra    
+> [Xudong Wang](https://people.eecs.berkeley.edu/~xdwang/), [Rohit Girdhar](https://rohitgirdhar.github.io/), [Stella X. Yu](https://www1.icsi.berkeley.edu/~stellayu/), [Ishan Misra](https://imisra.github.io/)
 > Tech report
 
-[project page](http://people.eecs.berkeley.edu/~xdwang/projects/CutLER/) | [arxiv](http://arxiv.org/abs/xxxx.yyyyy) | [colab](https://colab.research.google.com/drive/1NgEyFHvOfuA2MZZnfNPWg1w5gSr3HOBb?usp=sharing) | [bibtex](#citation)
+[project page](http://people.eecs.berkeley.edu/~xdwang/projects/CutLER/) | [arxiv](https://arxiv.org/abs/2301.11320) | [colab](https://colab.research.google.com/drive/1NgEyFHvOfuA2MZZnfNPWg1w5gSr3HOBb?usp=sharing) | [bibtex](#citation)
 
 ## Features
 - We propose MaskCut approach to generate pseudo-masks for multiple objects in an image.
