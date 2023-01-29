@@ -40,7 +40,7 @@ MaskCut can be used to provide segmentation masks for multiple instances of each
 
 Try out the MaskCut demo using Colab (no GPU needed): [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1X05lKL_IBRvZB7q6n6pb4w00_tIYjGlf?usp=sharing)
 
-Try out the web demo: [![Hugging Face Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://huggingface.co/spaces/hysts/MaskCut)
+Try out the web demo: [![Hugging Face Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://huggingface.co/spaces/facebook/MaskCut)
 
 If you want to run MaskCut locally, we provide `demo.py` that is able to visualize the pseudo-masks produced by MaskCut.
 Run it with:
@@ -90,7 +90,7 @@ After that, you can use "merge_jsons.py" to merge all these json files as descri
 ### Inference Demo for CutLER with Pre-trained Models
 Try out the CutLER demo using Colab (no GPU needed): [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1NgEyFHvOfuA2MZZnfNPWg1w5gSr3HOBb?usp=sharing)
 
-Try out the web demo: [![Hugging Face Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://huggingface.co/spaces/hysts/CutLER)
+Try out the web demo: [![Hugging Face Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://huggingface.co/spaces/facebook/CutLER)
 
 If you want to run CutLER demos locally,
 1. Pick a model and its config file from [model zoo](#model-zoo),
