@@ -42,6 +42,10 @@ Try out the MaskCut demo using Colab (no GPU needed): [![Open In Colab](https://
 
 Try out the web demo: [![Hugging Face Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://huggingface.co/spaces/facebook/MaskCut) (thanks to [@hysts](https://github.com/hysts)!)
 
+Try out Replicate demo and the API: [![Replicate](https://replicate.com/cjwbw/cutler/badge)](https://replicate.com/cjwbw/cutler) 
+
+
+
 If you want to run MaskCut locally, we provide `demo.py` that is able to visualize the pseudo-masks produced by MaskCut.
 Run it with:
 ```
