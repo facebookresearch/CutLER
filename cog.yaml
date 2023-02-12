@@ -1,0 +1,24 @@
+build:
+  gpu: true
+  cuda: "11.6"
+  python_version: "3.8"
+  python_packages:
+    - "torch==1.11.0"
+    - "torchvision==0.12.0"
+    - "faiss-gpu==1.7.2"
+    - "opencv-python==4.6.0.66"
+    - "scikit-image==0.19.2"
+    - "scikit-learn==1.1.1"
+    - "shapely==1.8.2"
+    - "timm==0.5.4"
+    - "pyyaml==6.0"
+    - "colored==1.4.4"
+    - "fvcore==0.1.5.post20220512"
+    - "gdown==4.5.4"
+    - "pycocotools==2.0.6"
+    - "numpy==1.20.0"
+
+  run:
+    - pip install git+https://github.com/lucasb-eyer/pydensecrf.git
+
+predict: "maskcut/predict.py:Predictor"
