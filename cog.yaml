@@ -21,4 +21,4 @@ build:
   run:
     - pip install git+https://github.com/lucasb-eyer/pydensecrf.git
 
-predict: "predict.py:Predictor"
+predict: "maskcut/predict.py:Predictor"
