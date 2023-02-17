@@ -14,7 +14,7 @@ if __name__ == "__main__":
     parser.add_argument('--save-path', type=str, default="imagenet_train_fixsize480_tau0.15_N3.json",
                         help='Path to save the merged annotation file')
     # following arguments should be consistent with maskcut.py or maskcut_with_submitit.py (if use submitit)
-    parser.add_argument('--num-folder', type=int, default=1,
+    parser.add_argument('--num-folder-per-job', type=int, default=1,
                         help='Number of folders per json file')
     parser.add_argument('--fixed-size', type=int, default=480,
                         help='rescale the input images to a fixed size')
@@ -26,7 +26,7 @@ if __name__ == "__main__":
     base_name = 'imagenet_train_fixsize{}_tau{}_N{}'.format(args.fixed_size, args.tau, args.N)
 
     start_idx = 0
-    every_k = args.num_folder
+    every_k = args.num_folder_per_job
     missed_folders = []
     tobe_merged_ann_dicts = []
 
