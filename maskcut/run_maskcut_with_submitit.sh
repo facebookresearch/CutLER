@@ -9,7 +9,7 @@ python run_with_submitit_maskcut_array.py \
 --dataset-path /path/to/imagenet/ \
 --tau 0.15 \
 --out-dir /path/to/save/annotations/ \
---num-folder 2 \
+--num-folder-per-job 2 \
 --job-index 0 \
 --fixed_size 480 \
 --N 3 \
