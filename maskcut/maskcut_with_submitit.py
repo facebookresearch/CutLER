@@ -295,10 +295,8 @@ category_info = {
     "id": 1
 }
 
-
-## feature net
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser('MaskCut')
+def get_args_parser():
+    parser = argparse.ArgumentParser('MaskCut script', add_help=False)
     # default arguments
     parser.add_argument('--out-dir', type=str, help='output directory')
     parser.add_argument('--vit-arch', type=str, default='small', choices=['base', 'small'], help='which architecture')
@@ -315,9 +313,10 @@ if __name__ == "__main__":
     parser.add_argument('--fixed_size', type=int, default=480, help='rescale the input images to a fixed size')
     parser.add_argument('--pretrain_path', type=str, default=None, help='path to pretrained model')
     parser.add_argument('--N', type=int, default=3, help='the maximum number of pseudo-masks per image')
-    args = parser.parse_args()
-    print (args)
+    return parser
 
+## feature net
+def main(args):
     if args.pretrain_path is not None:
         url = args.pretrain_path
     if args.vit_arch == 'base' and args.patch_size == 8:
