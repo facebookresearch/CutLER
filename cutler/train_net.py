@@ -124,6 +124,7 @@ def setup(args):
     cfg.merge_from_list(args.opts)
     # FIXME: brute force changes to test datasets and evaluation tasks
     if args.test_dataset != "": cfg.DATASETS.TEST = ((args.test_dataset),)
+    if args.train_dataset != "": cfg.DATASETS.TRAIN = ((args.train_dataset),)
     cfg.TEST.NO_SEGM = args.no_segm
     cfg.freeze()
     default_setup(cfg, args)

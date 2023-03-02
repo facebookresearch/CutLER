@@ -126,6 +126,9 @@ Run on multiple machines:
     parser.add_argument(
         "--test-dataset", type=str, default="", help="the dataset used for evaluation"
     )
+    parser.add_argument(
+        "--train-dataset", type=str, default="", help="the dataset used for training"
+    )
     parser.add_argument("--no-segm", action="store_true", help="perform evaluation on detection only")
     # PyTorch still may leave orphan processes in multi-gpu training.
     # Therefore we use a deterministic way to obtain port,
