@@ -18,7 +18,7 @@ Bi_RGB_STD = 5
 def densecrf(image, mask):
     h, w = mask.shape
     mask = mask.reshape(1, h, w)
-    fg = mask.astype(np.float) 
+    fg = mask.astype(float) 
     bg = 1 - fg
     output_logits = torch.from_numpy(np.concatenate((bg,fg), axis=0))
 
