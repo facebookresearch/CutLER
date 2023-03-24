@@ -359,7 +359,7 @@ We fine-tune a Cascade R-CNN model initialized with CutLER or MoCo-v2 on varying
 Both MoCo-v2 and our CutLER are trained for the 1x schedule using Detectron2, except for extremely low-shot settings with 1% or 2% labels. When training with 1% or 2% labels, we train both MoCo-v2 and our model for 3,600 iterations with a batch size of 16.
 
 ## License
-The majority of CutLER, Detectron2 and DINO are licensed under the [Apache 2.0 license](LICENSE), however portions of the project are available under separate license terms: TokenCut, Bilateral Solver and CRF are licensed under the MIT license; If you later add other third party code, please keep this license info updated, and please let us know if that component is licensed under something other than CC-BY-NC, MIT, or CC0.
+The majority of CutLER, Detectron2 and DINO are licensed under the [CC-BY-NC license](LICENSE), however portions of the project are available under separate license terms: TokenCut, Bilateral Solver and CRF are licensed under the MIT license; If you later add other third party code, please keep this license info updated, and please let us know if that component is licensed under something other than CC-BY-NC, MIT, or CC0.
 
 ## Ethical Considerations
 CutLER's wide range of detection capabilities may introduce similar challenges to many other visual recognition recognition methods.
