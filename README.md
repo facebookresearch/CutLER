@@ -7,6 +7,7 @@ It outperforms previous SOTA by **2.7 times** for AP50 and **2.6 times** for AR 
 
 > [**Cut and Learn for Unsupervised Object Detection and Instance Segmentation**](http://people.eecs.berkeley.edu/~xdwang/projects/CutLER/)            
 > [Xudong Wang](https://people.eecs.berkeley.edu/~xdwang/), [Rohit Girdhar](https://rohitgirdhar.github.io/), [Stella X. Yu](https://www1.icsi.berkeley.edu/~stellayu/), [Ishan Misra](https://imisra.github.io/)     
+> FAIR, Meta AI and UC Berkeley
 > CVPR 2023
 
 [project page](http://people.eecs.berkeley.edu/~xdwang/projects/CutLER/) | [arxiv](https://arxiv.org/abs/2301.11320) | [colab](https://colab.research.google.com/drive/1NgEyFHvOfuA2MZZnfNPWg1w5gSr3HOBb?usp=sharing) | [bibtex](#citation)
@@ -371,10 +372,11 @@ If you have any general questions, feel free to email us at [Xudong Wang](mailto
 ## Citation
 If you find our work inspiring or use our codebase in your research, please consider giving a star ⭐ and a citation.
 ```
-@article{wang2023cut,
-  title={Cut and Learn for Unsupervised Object Detection and Instance Segmentation},
+@inproceedings{wang2023cut,
+  title={Cut and learn for unsupervised object detection and instance segmentation},
   author={Wang, Xudong and Girdhar, Rohit and Yu, Stella X and Misra, Ishan},
-  journal={arXiv preprint arXiv:2301.11320},
+  booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition},
+  pages={3124--3134},
   year={2023}
 }
 ```
