@@ -106,7 +106,7 @@ If you want to run CutLER demos locally,
 2. We provide `demo.py` that is able to demo builtin configs. Run it with:
 ```
 cd cutler
-python demo/demo.py --config-file model_zoo/configs/CutLER-ImageNet/cascade_mask_rcnn_R_50_FPN.yaml \
+python demo/demo.py --config-file model_zoo/configs/CutLER-ImageNet/cascade_mask_rcnn_R_50_FPN_demo.yaml \
   --input demo/imgs/*.jpg \
   [--other-options]
   --opts MODEL.WEIGHTS /path/to/cutler_w_cascade_checkpoint
