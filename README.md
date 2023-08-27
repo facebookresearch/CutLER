@@ -18,12 +18,12 @@ Unsupervised video instance segmentation (**VideoCutLER**) is also supported. Im
   <img src="docs/demos_videocutler.gif" width=100%>
 </p>
 
-> [**VideoCutLER: Surprisingly Simple Unsupervised Video Instance Segmentation**](http://people.eecs.berkeley.edu/~xdwang/projects/CutLER/)            
+> [**VideoCutLER: Surprisingly Simple Unsupervised Video Instance Segmentation**](https://people.eecs.berkeley.edu/~xdwang/projects/VideoCutLER/videocutler.pdf)            
 > [Xudong Wang](https://people.eecs.berkeley.edu/~xdwang/), [Ishan Misra](https://imisra.github.io/), Zizun Zeng, [Rohit Girdhar](https://rohitgirdhar.github.io/), [Trevor Darrell](https://people.eecs.berkeley.edu/~trevor/)             
 > UC Berkeley; FAIR, Meta AI            
 > Preprint            
 
-[[`Code`](videocutler/README.md)] [[`PDF`](https://people.eecs.berkeley.edu/~xdwang/projects/VideoCutLER/videocutler.pdf)] [[`arxiv`](https://arxiv.org/abs/xxxx.xxxxx)] [[`bibtex`](#citation)]             
+[[`code`](videocutler/README.md)] [[`PDF`](https://people.eecs.berkeley.edu/~xdwang/projects/VideoCutLER/videocutler.pdf)] [[`arxiv`](https://arxiv.org/abs/xxxx.xxxxx)] [[`bibtex`](#citation)]             
 
 ## Features
 - We propose MaskCut approach to generate pseudo-masks for multiple objects in an image.
