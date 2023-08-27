@@ -1,0 +1,86 @@
+_BASE_: Base-YouTubeVIS-VideoInstanceSegmentation.yaml
+MODEL:
+  WEIGHTS: "pretrain/cutler_m2f_rn50.pth"
+  META_ARCHITECTURE: "VideoMaskFormer"
+  SEM_SEG_HEAD:
+    NAME: "MaskFormerHead"
+    IGNORE_VALUE: 255
+    NUM_CLASSES: 1 # class-agnostic
+    LOSS_WEIGHT: 1.0
+    CONVS_DIM: 256
+    MASK_DIM: 256
+    NORM: "GN"
+    # pixel decoder
+    PIXEL_DECODER_NAME: "MSDeformAttnPixelDecoder"
+    IN_FEATURES: ["res2", "res3", "res4", "res5"]
+    DEFORMABLE_TRANSFORMER_ENCODER_IN_FEATURES: ["res3", "res4", "res5"]
+    COMMON_STRIDE: 4
+    TRANSFORMER_ENC_LAYERS: 6
+  MASK_FORMER:
+    TRANSFORMER_DECODER_NAME: "VideoMultiScaleMaskedTransformerDecoder"
+    TRANSFORMER_IN_FEATURE: "multi_scale_pixel_decoder"
+    DEEP_SUPERVISION: True
+    NO_OBJECT_WEIGHT: 0.1
+    CLASS_WEIGHT: 2.0
+    MASK_WEIGHT: 5.0
+    DICE_WEIGHT: 5.0
+    HIDDEN_DIM: 256
+    NUM_OBJECT_QUERIES: 100
+    NHEADS: 8
+    DROPOUT: 0.3
+    DIM_FEEDFORWARD: 2048
+    ENC_LAYERS: 0
+    PRE_NORM: False
+    ENFORCE_INPUT_PROJ: False
+    SIZE_DIVISIBILITY: 32
+    DEC_LAYERS: 10  # 9 decoder layers, add one for the loss on learnable query
+    TRAIN_NUM_POINTS: 12544
+    OVERSAMPLE_RATIO: 3.0
+    IMPORTANCE_SAMPLE_RATIO: 0.75
+    TEST:
+      SEMANTIC_ON: False
+      INSTANCE_ON: True
+      PANOPTIC_ON: False
+      OVERLAP_THRESHOLD: 0.8
+      OBJECT_MASK_THRESHOLD: 0.8
+DATASETS:
+  TRAIN: ("imagenet_video_train_cls_agnostic",)
+  TEST: ("ytvis_2019_train",)
+SOLVER:
+  IMS_PER_BATCH: 16
+  BASE_LR: 0.00002
+  STEPS: (79999,)
+  MAX_ITER: 80000
+  WARMUP_FACTOR: 1.0
+  WARMUP_ITERS: 10
+  WEIGHT_DECAY: 0.05
+  OPTIMIZER: "ADAMW"
+  BACKBONE_MULTIPLIER: 0.1
+  CLIP_GRADIENTS:
+    ENABLED: True
+    CLIP_TYPE: "full_model"
+    CLIP_VALUE: 0.01
+    NORM_TYPE: 2.0
+  AMP:
+    ENABLED: True
+DATALOADER:
+  FILTER_EMPTY_ANNOTATIONS: False
+  NUM_WORKERS: 0
+  COPY_PASTE: True
+  COPY_PASTE_RATE: 1.0
+  VISUALIZE_COPY_PASTE: False
+  COPY_PASTE_RANDOM_NUM: False
+  COPY_PASTE_MIN_RATIO: 0.8
+  COPY_PASTE_MAX_RATIO: 1.0
+INPUT:
+  SAMPLING_FRAME_NUM: 3
+  MIN_SIZE_TRAIN_SAMPLING: "choice_by_clip"
+  RANDOM_FLIP: "flip_by_clip"
+  AUGMENTATIONS: ['brightness', 'contrast', 'rotation']
+  MIN_SIZE_TRAIN: (360, 480)
+  MIN_SIZE_TEST: 360
+  CROP:
+    ENABLED: True
+    TYPE: "absolute_range"
+    SIZE: (600, 720)
+OUTPUT_DIR: "OUTPUT/"

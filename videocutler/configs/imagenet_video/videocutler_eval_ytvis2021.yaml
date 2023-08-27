@@ -1,0 +1,3 @@
+_BASE_: video_mask2former_R50_cls_agnostic.yaml
+DATASETS:
+  TEST: ("ytvis_2021_train",)

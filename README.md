@@ -1,4 +1,4 @@
-# Cut and Learn for Unsupervised Object Detection and Instance Segmentation
+# Cut and Learn for Unsupervised Image & Video Object Detection and Instance Segmentation
 
 **Cut**-and-**LE**a**R**n (**CutLER**) is a simple approach for training object detection and instance segmentation models without human annotations.
 It outperforms previous SOTA by **2.7 times** for AP50 and **2.6 times** for AR on **11 benchmarks**.
@@ -7,16 +7,30 @@ It outperforms previous SOTA by **2.7 times** for AP50 and **2.6 times** for AR 
 
 > [**Cut and Learn for Unsupervised Object Detection and Instance Segmentation**](http://people.eecs.berkeley.edu/~xdwang/projects/CutLER/)            
 > [Xudong Wang](https://people.eecs.berkeley.edu/~xdwang/), [Rohit Girdhar](https://rohitgirdhar.github.io/), [Stella X. Yu](https://www1.icsi.berkeley.edu/~stellayu/), [Ishan Misra](https://imisra.github.io/)     
-> FAIR, Meta AI and UC Berkeley            
-> CVPR 2023
+> FAIR, Meta AI; UC Berkeley            
+> CVPR 2023            
 
-[project page](http://people.eecs.berkeley.edu/~xdwang/projects/CutLER/) | [arxiv](https://arxiv.org/abs/2301.11320) | [colab](https://colab.research.google.com/drive/1NgEyFHvOfuA2MZZnfNPWg1w5gSr3HOBb?usp=sharing) | [bibtex](#citation)
+[[`project page`](http://people.eecs.berkeley.edu/~xdwang/projects/CutLER/)] [[`arxiv`](https://arxiv.org/abs/2301.11320)] [[`colab`](https://colab.research.google.com/drive/1NgEyFHvOfuA2MZZnfNPWg1w5gSr3HOBb?usp=sharing)] [[`bibtex`](#citation)]             
+
+Unsupervised video instance segmentation (**VideoCutLER**) is also supported. ImageNet-1K is all we need for training a state-of-the-art unsupervised video instance segmentation model! The code is available [here](videocutler).             
+
+<p align="center">
+  <img src="docs/demos_videocutler.gif" width=100%>
+</p>
+
+> [**VideoCutLER: Surprisingly Simple Unsupervised Video Instance Segmentation**](http://people.eecs.berkeley.edu/~xdwang/projects/CutLER/)            
+> [Xudong Wang](https://people.eecs.berkeley.edu/~xdwang/), [Ishan Misra](https://imisra.github.io/), Zizun Zeng, [Rohit Girdhar](https://rohitgirdhar.github.io/), [Trevor Darrell](https://people.eecs.berkeley.edu/~trevor/)             
+> UC Berkeley; FAIR, Meta AI            
+> Preprint            
+
+[[`Code`](videocutler/README.md)] [[`PDF`](https://people.eecs.berkeley.edu/~xdwang/projects/VideoCutLER/videocutler.pdf)] [[`arxiv`](https://arxiv.org/abs/xxxx.xxxxx)] [[`bibtex`](#citation)]             
 
 ## Features
 - We propose MaskCut approach to generate pseudo-masks for multiple objects in an image.
 - CutLER can learn unsupervised object detectors and instance segmentors solely on ImageNet-1K.
 - CutLER exhibits strong robustness to domain shifts when evaluated on 11 different benchmarks across domains like natural images, video frames, paintings, sketches, etc.
 - CutLER can serve as a pretrained model for fully/semi-supervised detection and segmentation tasks.
+- We also propose VideoCutLER, a surprisingly simple unsupervised video instance segmentation (UVIS) method without relying on optical flows. ImaegNet-1K is all we need for training a SOTA UVIS model!
 
 ## Installation
 See [installation instructions](INSTALL.md).
@@ -363,7 +377,7 @@ Both MoCo-v2 and our CutLER are trained for the 1x schedule using Detectron2, ex
 The majority of CutLER, Detectron2 and DINO are licensed under the [CC-BY-NC license](LICENSE), however portions of the project are available under separate license terms: TokenCut, Bilateral Solver and CRF are licensed under the MIT license; If you later add other third party code, please keep this license info updated, and please let us know if that component is licensed under something other than CC-BY-NC, MIT, or CC0.
 
 ## Ethical Considerations
-CutLER's wide range of detection capabilities may introduce similar challenges to many other visual recognition recognition methods.
+CutLER's wide range of detection capabilities may introduce similar challenges to many other visual recognition methods.
 As the image can contain arbitrary instances, it may impact the model output.
 
 ## How to get support from us?
@@ -378,5 +392,14 @@ If you find our work inspiring or use our codebase in your research, please cons
   booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition},
   pages={3124--3134},
   year={2023}
+}
+```
+
+```
+@article{wang2023videocutler,
+    title={VideoCutLER: Surprisingly Simple Unsupervised Video Instance Segmentation},
+    author={Wang, Xudong and Misra, Ishan and Zeng, Zizun and Girdhar, Rohit and Darrell, Trevor},
+    journal={arXiv},
+    year={2023}
 }
 ```

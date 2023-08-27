@@ -2,6 +2,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
+__MACOSX/
 
 # C extensions
 *.so
@@ -76,6 +77,13 @@ target/
 
 # Jupyter Notebook
 .ipynb_checkpoints
+
+# pretrained models
+videocutler/pretrain
+*.pth
+
+# demo results
+demos/
 
 # IPython
 profile_default/
