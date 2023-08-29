@@ -23,7 +23,7 @@ Unsupervised video instance segmentation (**VideoCutLER**) is also supported. Im
 > UC Berkeley; FAIR, Meta AI            
 > Preprint            
 
-[[`code`](videocutler/README.md)] [[`PDF`](https://people.eecs.berkeley.edu/~xdwang/projects/VideoCutLER/videocutler.pdf)] [[`arxiv`](https://arxiv.org/abs/xxxx.xxxxx)] [[`bibtex`](#citation)]             
+[[`code`](videocutler/README.md)] [[`PDF`](https://people.eecs.berkeley.edu/~xdwang/projects/VideoCutLER/videocutler.pdf)] [[`arxiv`](https://arxiv.org/abs/2308.14710)] [[`bibtex`](#citation)]             
 
 ## Features
 - We propose MaskCut approach to generate pseudo-masks for multiple objects in an image.
@@ -397,9 +397,9 @@ If you find our work inspiring or use our codebase in your research, please cons
 
 ```
 @article{wang2023videocutler,
-    title={VideoCutLER: Surprisingly Simple Unsupervised Video Instance Segmentation},
-    author={Wang, Xudong and Misra, Ishan and Zeng, Zizun and Girdhar, Rohit and Darrell, Trevor},
-    journal={arXiv},
-    year={2023}
+  title={VideoCutLER: Surprisingly Simple Unsupervised Video Instance Segmentation},
+  author={Wang, Xudong and Misra, Ishan and Zeng, Zizun and Girdhar, Rohit and Darrell, Trevor},
+  journal={arXiv preprint arXiv:2308.14710},
+  year={2023}
 }
 ```
