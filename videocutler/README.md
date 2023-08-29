@@ -11,7 +11,7 @@ VideoCutLER is a simple unsupervised video instance segmentation (UVIS) method w
 > UC Berkeley; FAIR, Meta AI            
 > Preprint            
 
-[[`arxiv`](https://arxiv.org/abs/xxxx.xxxxx)] [[`PDF`](https://people.eecs.berkeley.edu/~xdwang/projects/VideoCutLER/videocutler.pdf)] [[`bibtex`](#citation)]             
+[[`arxiv`](https://arxiv.org/abs/2308.14710)] [[`PDF`](https://people.eecs.berkeley.edu/~xdwang/projects/VideoCutLER/videocutler.pdf)] [[`bibtex`](#citation)]             
 
 
 ## Installation
@@ -111,9 +111,9 @@ If you have any general questions, feel free to email us at [Xudong Wang](mailto
 If you find our work inspiring or use our codebase in your research, please consider giving a star ⭐ and a citation.
 ```
 @article{wang2023videocutler,
-    title={VideoCutLER: Surprisingly Simple Unsupervised Video Instance Segmentation},
-    author={Wang, Xudong and Misra, Ishan and Zeng, Zizun and Girdhar, Rohit and Darrell, Trevor},
-    journal={arXiv},
-    year={2023}
+  title={VideoCutLER: Surprisingly Simple Unsupervised Video Instance Segmentation},
+  author={Wang, Xudong and Misra, Ishan and Zeng, Zizun and Girdhar, Rohit and Darrell, Trevor},
+  journal={arXiv preprint arXiv:2308.14710},
+  year={2023}
 }
 ```
