@@ -12,7 +12,7 @@ It outperforms previous SOTA by **2.7 times** for AP50 and **2.6 times** for AR 
 
 [[`project page`](http://people.eecs.berkeley.edu/~xdwang/projects/CutLER/)] [[`arxiv`](https://arxiv.org/abs/2301.11320)] [[`colab`](https://colab.research.google.com/drive/1NgEyFHvOfuA2MZZnfNPWg1w5gSr3HOBb?usp=sharing)] [[`bibtex`](#citation)]             
 
-Unsupervised video instance segmentation (**VideoCutLER**) is also supported. ImageNet-1K is all we need for training a state-of-the-art unsupervised video instance segmentation model! The code is available [here](videocutler).             
+Unsupervised video instance segmentation (**VideoCutLER**) is also supported. ***We demonstrate that video instance segmentation models can be learned without using any human annotations, without relying on natural videos (ImageNet data alone is sufficient), and even without motion estimations!*** The code is available [here](videocutler).             
 
 <p align="center">
   <img src="docs/demos_videocutler.gif" width=100%>
