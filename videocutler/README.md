@@ -1,6 +1,6 @@
 # VideoCutLER: Unsupervised Video Instance Segmentation
 
-VideoCutLER is a simple unsupervised video instance segmentation (UVIS) method without relying on optical flows. ImaegNet-1K is all we need for training a state-of-the-art UVIS model!        
+VideoCutLER is a simple unsupervised video instance segmentation (UVIS) method. ***We demonstrate that video instance segmentation models can be learned without using any human annotations, without relying on natural videos (ImageNet data alone is sufficient), and even without motion estimations!***    
 
 <p align="center">
   <img src="../docs/demos_videocutler.gif" width=100%>
