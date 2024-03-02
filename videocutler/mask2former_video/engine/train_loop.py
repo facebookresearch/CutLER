@@ -80,16 +80,13 @@ class CustomSimpleTrainer(SimpleTrainer):
         return (intersection.to(torch.float) / union).mean().view(1, -1)
 
     def IoY(self, mask1, mask2): # only work when the batch size is 1
-        # print(mask1.size(), mask2.size())
         mask1, mask2 = mask1.squeeze(), mask2.squeeze()
         mask1, mask2 = (mask1>0.5).to(torch.bool), (mask2>0.5).to(torch.bool)
         intersection = torch.sum(mask1 * (mask1 == mask2), dim=[-1, -2]).squeeze()
         union = torch.sum(mask2, dim=[-1, -2]).squeeze()
         return (intersection.to(torch.float) / union).mean().view(1, -1)
 
-    def copy_and_paste(self, labeled_data, unlabeled_data):
-        # print("batch size: ", len(labeled_data))
-        new_unlabeled_data = []
+    def copy_and_paste(self, sources, targets):
         def mask_iou_matrix(x, y, mode='iou'):
             x = x.reshape(x.shape[0], -1).float() 
             y = y.reshape(y.shape[0], -1).float()
@@ -122,51 +119,47 @@ class CustomSimpleTrainer(SimpleTrainer):
             print("Saving to {} ...".format(save_path))
             vis.save(save_path)
 
-        for cur_labeled_data, cur_unlabeled_data in zip(labeled_data, unlabeled_data):
-            # print("keys: ", [key for key in cur_labeled_data])
+        new_targets = []
+        target_data_copy = []
+        for source_data, target_data in zip(sources, targets):
             # data dict is created by mask2former_video/data_video/dataset_mapper.py
             # data['instances']: list of instances [[frame1 instances],[frame2 instances]...[frameN instances]]
-            cur_labeled_instances = cur_labeled_data["instances"]
-            # print('num frames is {}; num instances is {}'.format(len(cur_labeled_instances), len(cur_labeled_instances[0])))
-            cur_labeled_image_list = cur_labeled_data["image"]
-            # print('num images is: ', len(cur_labeled_image_list))
-            cur_unlabeled_instances_list = cur_unlabeled_data["instances"]
-            cur_unlabeled_image_list = cur_unlabeled_data["image"]
+            source_instances = source_data["instances"]
+            source_image_list = source_data["image"]
+            target_instances_list = target_data["instances"]
+            target_image_list = target_data["image"]
+            target_data_copy.append(copy.deepcopy(target_data))
 
-            num_labeled_instances = len(cur_labeled_instances[0])
-            # num_labeled_instances = len(cur_labeled_data["instances"][0])
-        
+            num_source_instances = len(source_instances[0])        
             copy_paste_rate = random.random()
-
-            if self.cfg_COPY_PASTE_RATE >= copy_paste_rate and num_labeled_instances > 0:
+            if self.cfg_COPY_PASTE_RATE >= copy_paste_rate and num_source_instances > 0:
                 if self.cfg_COPY_PASTE_RANDOM_NUM:
-                    num_copy = 1 if num_labeled_instances == 1 else np.random.randint(1, max(1, num_labeled_instances))
+                    num_copy = 1 if num_source_instances == 1 else np.random.randint(1, max(1, num_source_instances))
                 else:
-                    num_copy = num_labeled_instances
+                    num_copy = num_source_instances
             else:
                 num_copy = 0
-            if num_labeled_instances == 0 or num_copy == 0:
-                new_unlabeled_data.append(cur_unlabeled_data)
-            else:
-                choice = np.random.choice(num_labeled_instances, num_copy, replace=False)
-                # print("num_labeled_instances: {}; num_copy: {}; choice: {}".format(num_labeled_instances, num_copy, choice))
-                # randomly choose instances from the first frame and copy all these selected instances
-                frame_id = np.random.randint(1, max(1, len(cur_labeled_instances))) - 1
-                copied_instances = cur_labeled_instances[frame_id][choice].to(device=cur_unlabeled_instances_list[frame_id].gt_boxes.device)
-                # paste these instances to ALL frames in the same video
-                # print("copied_instances: ", len(copied_instances), copied_instances)
-                # print("copied to: ", len(cur_unlabeled_instances_list), cur_unlabeled_instances_list)
-                
-                cur_unlabeled_instances_list_new = []
-                cur_unlabeled_image_list_new = []
 
-                for f in range(len(cur_unlabeled_instances_list)):
-                    cur_unlabeled_instances = cur_unlabeled_instances_list[f]
-                    cur_unlabeled_image = cur_unlabeled_image_list[f]
-                    copied_masks = copied_instances.gt_masks
-                    copied_boxes = copied_instances.gt_boxes
-                    _, labeled_h, labeled_w = cur_labeled_image_list[frame_id].shape
-                    _, unlabeled_h, unlabeled_w = cur_unlabeled_image.shape
+            if num_source_instances == 0 or num_copy == 0:
+                new_targets.append(target_data)
+                continue
+            else:
+                choice = np.random.choice(num_source_instances, num_copy, replace=False)
+                # randomly choose instances from the first frame and copy all these selected instances
+                frame_id = np.random.randint(1, max(1, len(source_instances))) - 1
+                copied_instances = source_instances[frame_id][choice].to(device=target_instances_list[frame_id].gt_boxes.device)
+
+                # paste these instances to ALL frames in the same video                
+                target_instances_list_new = []
+                target_image_list_new = []
+                for f in range(len(target_instances_list)):
+                    # Use DEEPCOPY, otherwise, the objects will be in-place edited
+                    target_instances = copy.deepcopy(target_instances_list[f])
+                    target_image = copy.deepcopy(target_image_list[f])
+                    copied_masks = copy.deepcopy(copied_instances.gt_masks)
+                    copied_boxes = copy.deepcopy(copied_instances.gt_boxes)
+                    _, labeled_h, labeled_w = source_image_list[frame_id].shape
+                    _, unlabeled_h, unlabeled_w = target_image.shape
 
                     # rescale the labeled image to align with unlabeled one.
                     if isinstance(copied_masks, torch.Tensor):
@@ -182,24 +175,25 @@ class CustomSimpleTrainer(SimpleTrainer):
                     w_shift = random.randint(0, max(0, unlabeled_w - w_new))
                     h_shift = random.randint(0, max(0, unlabeled_h - h_new))
 
-                    cur_labeled_image_new = F.interpolate(cur_labeled_image_list[frame_id][None, ...].float(), size=(h_new, w_new), mode="bilinear", align_corners=False).byte().squeeze(0)
+                    source_image_new = F.interpolate(source_image_list[frame_id][None, ...].float(), size=(h_new, w_new), mode="bilinear", align_corners=False).byte().squeeze(0)
                     if isinstance(copied_masks, torch.Tensor):
                         masks_new = F.interpolate(copied_masks[None, ...].float(), size=(h_new, w_new), mode="bilinear", align_corners=False).bool().squeeze(0)
                     else:
                         masks_new = F.interpolate(copied_masks.tensor[None, ...].float(), size=(h_new, w_new), mode="bilinear", align_corners=False).bool().squeeze(0)
                     copied_boxes.scale(1. * unlabeled_w / labeled_w * resize_ratio, 1. * unlabeled_h / labeled_h * resize_ratio)
 
-                    if isinstance(cur_unlabeled_instances.gt_masks, torch.Tensor):
-                        _, mask_w, mask_h = cur_unlabeled_instances.gt_masks.size()
+                    if isinstance(target_instances.gt_masks, torch.Tensor):
+                        _, mask_w, mask_h = target_instances.gt_masks.size()
                     else:
-                        _, mask_w, mask_h = cur_unlabeled_instances.gt_masks.tensor.size()
-                    masks_new_all = torch.zeros(num_copy, mask_w, mask_h)
-                    image_new_all = torch.zeros_like(cur_unlabeled_image)
+                        _, mask_w, mask_h = target_instances.gt_masks.tensor.size()
 
-                    image_new_all[:, h_shift:h_shift+h_new, w_shift:w_shift+w_new] += cur_labeled_image_new
+                    masks_new_all = torch.zeros(num_copy, mask_w, mask_h)
+                    image_new_all = torch.zeros_like(target_image)
+
+                    image_new_all[:, h_shift:h_shift+h_new, w_shift:w_shift+w_new] += source_image_new
                     masks_new_all[:, h_shift:h_shift+h_new, w_shift:w_shift+w_new] += masks_new
 
-                    cur_labeled_image = image_new_all.byte() #.squeeze(0)
+                    source_image = image_new_all.byte() #.squeeze(0)
                     if isinstance(copied_masks, torch.Tensor):
                         copied_masks = masks_new_all.bool() #.squeeze(0)
                     else:
@@ -212,74 +206,77 @@ class CustomSimpleTrainer(SimpleTrainer):
                     copied_instances.gt_masks = copied_masks
                     copied_instances.gt_boxes = copied_boxes
                     copied_instances._image_size = (unlabeled_h, unlabeled_w)
-                    if len(cur_unlabeled_instances) == 0:
+                    if len(target_instances) == 0:
                         if isinstance(copied_instances.gt_masks, torch.Tensor):
                             alpha = copied_instances.gt_masks.sum(0) > 0
                         else:
                             alpha = copied_instances.gt_masks.tensor.sum(0) > 0
                         # merge image
                         alpha = alpha.cpu()
-                        composited_image = (alpha * cur_labeled_image) + (~alpha * cur_unlabeled_image)
+                        composited_image = (alpha * source_image) + (~alpha * target_image)
 
-                        cur_unlabeled_image_list_new.append(composited_image)
-                        cur_unlabeled_instances_list_new.append(copied_instances)
-                        # cur_unlabeled_data["image"] = composited_image
-                        # cur_unlabeled_data["instances"] = copied_instances
+                        target_image_list_new.append(composited_image)
+                        target_instances_list_new.append(copied_instances)
                     else:
                         # remove the copied object if iou greater than 0.5
                         if isinstance(copied_masks, torch.Tensor):
-                            iou_matrix = mask_iou_matrix(copied_masks, cur_unlabeled_instances.gt_masks, mode='ioy') # nxN
+                            iou_matrix = mask_iou_matrix(copied_masks, target_instances.gt_masks, mode='ioy') # nxN
                         else:
-                            iou_matrix = mask_iou_matrix(copied_masks.tensor, cur_unlabeled_instances.gt_masks.tensor, mode='ioy') # nxN
+                            iou_matrix = mask_iou_matrix(copied_masks.tensor, target_instances.gt_masks.tensor, mode='ioy') # nxN
 
-                        # keep = iou_matrix.max(1)[0] < 0.5
-                        keep = iou_matrix.max(1)[0] < 0.0
-                        # for each video, all frames should have the same amount of instances and gt masks (can be None).
-                        if keep.sum() == 0:
-                            # new_unlabeled_data.append(cur_unlabeled_data)
-                            cur_unlabeled_image_list_new.append(cur_unlabeled_image)
-                            cur_unlabeled_instances_list_new.append(cur_unlabeled_instances)
+                        # check if the iou is greater than 0.5. for each video, all frames should have 
+                        # the same amount of instances and gt masks (can be None).
+                        if f == 0:
+                            keep = iou_matrix.max(1)[0] < 0.5
+                            sum_keep = keep.sum()
+                        else:
+                            keep = iou_matrix.max(1)[0] < 2.0
+
+                        if sum_keep < keep.size()[0]:
+                            target_image_list_new.append(target_image)
+                            target_instances_list_new.append(target_instances)
                             continue
+
                         copied_instances = copied_instances[keep]
                         # update existing instances in unlabeled image
                         if isinstance(copied_instances.gt_masks, torch.Tensor):
                             alpha = copied_instances.gt_masks.sum(0) > 0
-                            cur_unlabeled_instances.gt_masks = ~alpha * cur_unlabeled_instances.gt_masks
-                            areas_unlabeled = cur_unlabeled_instances.gt_masks.sum((1,2))
+                            target_instances.gt_masks = ~alpha * target_instances.gt_masks
+                            areas_unlabeled = target_instances.gt_masks.sum((1,2))
                         else:
                             alpha = copied_instances.gt_masks.tensor.sum(0) > 0
-                            cur_unlabeled_instances.gt_masks.tensor = ~alpha * cur_unlabeled_instances.gt_masks.tensor
-                            areas_unlabeled = cur_unlabeled_instances.gt_masks.tensor.sum((1,2))
+                            target_instances.gt_masks.tensor = ~alpha * target_instances.gt_masks.tensor
+                            areas_unlabeled = target_instances.gt_masks.tensor.sum((1,2))
                         # merge image
                         alpha = alpha.cpu()
-                        composited_image = (alpha * cur_labeled_image) + (~alpha * cur_unlabeled_image)
+                        composited_image = (alpha * source_image) + (~alpha * target_image)
                         # merge instances
-                        merged_instances = Instances.cat([cur_unlabeled_instances[areas_unlabeled > 0], copied_instances])
+                        merged_instances = Instances.cat([target_instances[areas_unlabeled > 0], copied_instances])
                         # update boxes
                         if isinstance(merged_instances.gt_masks, torch.Tensor):
                             merged_instances.gt_boxes = BitMasks(merged_instances.gt_masks).get_bounding_boxes()
-                            # merged_instances.gt_boxes = merged_instances.gt_masks.get_bounding_boxes()
                         else:
                             merged_instances.gt_boxes = merged_instances.gt_masks.get_bounding_boxes()
 
-                        cur_unlabeled_image_list_new.append(composited_image)
-                        cur_unlabeled_instances_list_new.append(merged_instances)
-                        # cur_unlabeled_data["image"] = composited_image
-                        # cur_unlabeled_data["instances"] = merged_instances
+                        target_image_list_new.append(composited_image)
+                        target_instances_list_new.append(merged_instances)
 
                     if self.cfg_VISUALIZE_COPY_PASTE:
-                        visualize_data(cur_unlabeled_data, save_path = 'sample_{}.jpg'.format(np.random.randint(5)))
+                        visualize_data(target_data, save_path = 'sample_{}.jpg'.format(np.random.randint(5)))
 
-                cur_unlabeled_data["image"] = cur_unlabeled_image_list_new
-                cur_unlabeled_data["instances"] = cur_unlabeled_instances_list_new
-                # print("before appending: ", len(cur_unlabeled_image_list_new), len(cur_unlabeled_instances_list_new))
-                new_unlabeled_data.append(cur_unlabeled_data)
-        # for i in range(len(new_unlabeled_data)):
-        #     try:
-        #         print(i, len(new_unlabeled_data[i]['instances'][0]))
-        #     except:
-        #         print("Error!!!", len(cur_unlabeled_instances_list), i, new_unlabeled_data[i])
-        return new_unlabeled_data
+                target_data["image"] = target_image_list_new
+                target_data["instances"] = target_instances_list_new
+                new_targets.append(target_data)
+
+        new_targets_outputs = []
+        for t, new_target in enumerate(new_targets):
+            n_insts = [len(new_target["instances"][i]) for i in range(len(new_target["instances"]))]
+            try:
+                assert len(set(n_insts)) == 1, "The number of instances should be the same for all frames in the same video."
+                new_targets_outputs.append(new_target)
+            except:
+                new_targets_outputs.append(target_data_copy[t])
+        return new_targets_outputs
 
     def run_step(self):
         """
@@ -291,9 +288,7 @@ class CustomSimpleTrainer(SimpleTrainer):
         If you want to do something with the data, you can wrap the dataloader.
         """
         data = next(self._data_loader_iter)
-        # print(data, len(data))
         if self.use_copy_paste:
-            # print('using copy paste')
             data = self.copy_and_paste(copy.deepcopy(data[::-1]), data)
         data_time = time.perf_counter() - start
 
@@ -369,7 +364,6 @@ class CustomAMPTrainer(CustomSimpleTrainer):
         start = time.perf_counter()
         data = next(self._data_loader_iter)
         if self.use_copy_paste:
-            # print('using copy paste')
             data = self.copy_and_paste(copy.deepcopy(data[::-1]), data)
         data_time = time.perf_counter() - start
 

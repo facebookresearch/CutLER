@@ -227,11 +227,11 @@ class VideoMaskFormer(nn.Module):
     def prepare_targets(self, targets, images):
         h_pad, w_pad = images.tensor.shape[-2:]
         gt_instances = []
-        for targets_per_video in targets:
+        for i, targets_per_video in enumerate(targets):
             _num_instance = len(targets_per_video["instances"][0])
             mask_shape = [_num_instance, self.num_frames, h_pad, w_pad]
             gt_masks_per_video = torch.zeros(mask_shape, dtype=torch.bool, device=self.device)
-
+            
             gt_ids_per_video = []
             for f_i, targets_per_frame in enumerate(targets_per_video["instances"]):
                 targets_per_frame = targets_per_frame.to(self.device)

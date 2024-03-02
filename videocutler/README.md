@@ -7,9 +7,9 @@ VideoCutLER is a simple unsupervised video instance segmentation (UVIS) method. 
 </p>            
 
 > [**VideoCutLER: Surprisingly Simple Unsupervised Video Instance Segmentation**](https://people.eecs.berkeley.edu/~xdwang/projects/VideoCutLER/videocutler.pdf)            
-> [Xudong Wang](https://people.eecs.berkeley.edu/~xdwang/), [Ishan Misra](https://imisra.github.io/), Zizun Zeng, [Rohit Girdhar](https://rohitgirdhar.github.io/), [Trevor Darrell](https://people.eecs.berkeley.edu/~trevor/)             
+> [Xudong Wang](https://people.eecs.berkeley.edu/~xdwang/), [Ishan Misra](https://imisra.github.io/), Ziyun Zeng, [Rohit Girdhar](https://rohitgirdhar.github.io/), [Trevor Darrell](https://people.eecs.berkeley.edu/~trevor/)             
 > UC Berkeley; FAIR, Meta AI            
-> Preprint            
+> CVPR 2024            
 
 [[`arxiv`](https://arxiv.org/abs/2308.14710)] [[`PDF`](https://people.eecs.berkeley.edu/~xdwang/projects/VideoCutLER/videocutler.pdf)] [[`bibtex`](#citation)]             
 
@@ -112,7 +112,7 @@ If you find our work inspiring or use our codebase in your research, please cons
 ```
 @article{wang2023videocutler,
   title={VideoCutLER: Surprisingly Simple Unsupervised Video Instance Segmentation},
-  author={Wang, Xudong and Misra, Ishan and Zeng, Zizun and Girdhar, Rohit and Darrell, Trevor},
+  author={Wang, Xudong and Misra, Ishan and Zeng, Ziyun and Girdhar, Rohit and Darrell, Trevor},
   journal={arXiv preprint arXiv:2308.14710},
   year={2023}
 }

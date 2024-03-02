@@ -54,6 +54,7 @@ from mask2former_video import (
 )
 # additional settings
 from mask2former_video.engine import DefaultTrainer
+import wandb
 
 # setup wandb
 
@@ -258,9 +259,17 @@ def setup(args):
     add_maskformer2_video_config(cfg)
     cfg.merge_from_file(args.config_file)
     cfg.merge_from_list(args.opts)
-    # NOTE: also need to change detectron2/detectron2/enginee/defaults.py
-    # NOTE: need to change detectron2/detectron2/data/detection_utils.py
+    # NOTE: need to add following lines to detectron2/detectron2/enginee/defaults.py
+    # parser.add_argument("--train-dataset", default="", help="training dataset")
+    # parser.add_argument("--test-dataset", default="", help="testing dataset")
+    # parser.add_argument("--steps", default=0, help="number of steps to train")
     # NOTE: need to change detectron2/detectron2/data/transforms/transform.py
+    # replace all assert img.shape[:2] == (self.h, self.w) to the following lines
+    # try:
+    #     img.shape[:2] == (self.h, self.w)
+    # except:
+    #     (self.h, self.w) = (self.w, self.h)
+    #     assert img.shape[:2] == (self.h, self.w)
     if args.test_dataset != "": cfg.DATASETS.TEST = ((args.test_dataset),)
     if args.train_dataset != "": cfg.DATASETS.TRAIN = ((args.train_dataset),)
     if args.steps != 0: cfg.SOLVER.STEPS = (int(args.steps),)
@@ -276,15 +285,15 @@ def main(args):
     cfg = setup(args)
 
     # start a new wandb run to track this script
-    # if not args.eval_only or args.wandb_name != "":
-    #     if comm.is_main_process():  # only on main process
-    #         wandb.init(
-    #             # set the wandb project where this run will be logged
-    #             project="VideoCutLER",
-    #             sync_tensorboard=True,
-    #             name=args.wandb_name,
-    #             entity="xdwang",
-    #         )
+    if not args.eval_only or args.wandb_name != "":
+        if comm.is_main_process():  # only on main process
+            wandb.init(
+                # set the wandb project where this run will be logged
+                project="VideoCutLER",
+                sync_tensorboard=True,
+                name=args.wandb_name,
+                entity="xdwang",
+            )
 
     if args.eval_only:
         model = Trainer.build_model(cfg)
