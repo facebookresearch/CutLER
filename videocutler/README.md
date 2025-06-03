@@ -44,7 +44,7 @@ python demo_video/demo.py \
   --output demos/ \
   --opts MODEL.WEIGHTS videocutler_m2f_rn50.pth
 ```
-Our trained VideoCutLER model on synthetic videos using ImageNet-1K can be obtained from [here](https://drive.google.com/file/d/11TACB8tOaAc-eXBo_i2arR_7qgGSeXRg/view?usp=drive_link). Then you should specify `MODEL.WEIGHTS` to the model checkpoint for evaluation.
+Our trained VideoCutLER model on synthetic videos using ImageNet-1K can be obtained from [here](https://drive.google.com/file/d/1zqwqJSb2Mc0lmQYEYtakA5T2on1ShdP2/view?usp=drive_link). Then you should specify `MODEL.WEIGHTS` to the model checkpoint for evaluation.
 Above command will run the inference and show visualizations in an OpenCV window, and save the results in the mp4 format.
 For details of the command line arguments, see `demo.py -h` or look at its source code to understand its behavior. Some common arguments are:
 <!-- * To save outputs to a directory (for videos), use `--output`. -->
@@ -64,7 +64,7 @@ To train a model with "train_net_video.py", first setup the ImageNet-1K dataset 
 
 Before training the detector, it is necessary to use MaskCut to generate pseudo-masks for all ImageNet data.
 You can either use the pre-generated json file directly by downloading it from [here]() and placing it under "DETECTRON2_DATASETS/imagenet/annotations/", or generate your own pseudo-masks by following the instructions in [MaskCut](#1-maskcut).
-You should download the pre-trained CutLER model from this [link](https://drive.google.com/file/d/1YFP14mCHBGR3SbepGiTv-OMeUIrtTPc3/view?usp=sharing) and then place it in the "videocutler/pretrain" directory, then run:
+You should download the pre-trained CutLER model from this [link](https://drive.google.com/file/d/1XFH4sc2qFl2d31Si-yPQ9d4d1WvbFArI/view?usp=sharing) and then place it in the "videocutler/pretrain" directory, then run:
 ```
 cd videocutler
 export DETECTRON2_DATASETS=/path/to/DETECTRON2_DATASETS/
@@ -87,7 +87,7 @@ sbatch train-1node.sh \
 
 
 ### Unsupervised Zero-shot Evaluation
-To evaluate a model's performance on YouTubeVIS-2019 and YouTubeVIS-2021, please refer to [datasets/README.md](datasets/README.md) for instructions on preparing the datasets. Next, download the [model weights](https://drive.google.com/file/d/11TACB8tOaAc-eXBo_i2arR_7qgGSeXRg/view?usp=drive_link), specify the "model_weights", "config_file" and the path to "DETECTRON2_DATASETS", then run the following commands. 
+To evaluate a model's performance on YouTubeVIS-2019 and YouTubeVIS-2021, please refer to [datasets/README.md](datasets/README.md) for instructions on preparing the datasets. Next, download the [model weights](https://drive.google.com/file/d/1ozeh3U3uxZImjabKVae8kNZSoNuvFx49/view?usp=sharing), specify the "model_weights", "config_file" and the path to "DETECTRON2_DATASETS", then run the following commands. 
 ```
 export DETECTRON2_DATASETS=/PATH/TO/DETECTRON2_DATASETS/
 CUDA_VISIBLE_DEVICES=0,1,2,3 python train_net_video.py --num-gpus 4 \
