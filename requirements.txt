@@ -10,4 +10,4 @@ timm==0.5.4
 pyyaml==6.0
 colored
 fvcore==0.1.5.post20220512
-gdown==4.5.4
+gdown==5.2.2
